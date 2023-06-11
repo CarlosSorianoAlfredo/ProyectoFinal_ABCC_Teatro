@@ -224,6 +224,16 @@ public class VentanaInicio extends JFrame  implements ActionListener, KeyListene
 
         //--------------------      BOTON CAMBIAR MIEMBRO     ----------------------------
 
+        btn_CambiarMiembro = new JButton(new ImageIcon("./imagenes/lapiz_cambio.png"));
+        btn_CambiarMiembro.setBackground(new Color(245, 190, 87, 250));
+        btn_CambiarMiembro.setBorderPainted(false);
+        btn_CambiarMiembro.setBounds(850, 110, 110, 100);
+        btn_CambiarMiembro.addActionListener(this);
+        btn_CambiarMiembro.setEnabled(false);
+        btn_CambiarMiembro.setVisible(false);
+        JAltasM.add(btn_CambiarMiembro);
+
+
 
         JLabel lblVaciarMiembro = new JLabel("LIMPIAR CAMPOS");
         lblVaciarMiembro.setFont(new Font("Arial", Font.BOLD, 13));
@@ -315,38 +325,19 @@ public class VentanaInicio extends JFrame  implements ActionListener, KeyListene
                 JAltasM.setBackground(new Color(209, 246, 146, 155));
                 btn_Vaciar_Color=new Color(209, 246, 146, 155);
                 btn_Vaciado.setBackground(btn_Vaciar_Color);
-                lblConfirmarMiembro.setVisible(true);
+                metodoMagicoHabilitarComponentes(lblConfirmarMiembro,tfnombreM,tfApellidoMiembro,lblEdad,CBEdad,coloniaM,CBcoloniasM,calleM, CBcallesM,lblesActor,EresActor);
                 btn_AgregarMiembro.setVisible(true);
-                tfnombreM.setEnabled(true);
-                tfApellidoMiembro.setEnabled(true);
+                CBEdad.setVisible(true);
+                CBcoloniasM.setVisible(true);
+                CBcallesM.setVisible(true);
+                EresActor.setVisible(true);
 
-                lblEliminarMiembro.setVisible(false);
+                metodoMagicoParaDesabilitarComponentes(lblEliminarMiembro,btn_EliminarMiembro,btn_BuscarEliminacion,lbl_ID_Miembro,tfID,btn_Buscarcambio,btn_CambiarMiembro);
                 btn_EliminarMiembro.setVisible(false);
-                btn_EliminarMiembro.setEnabled(false);
                 btn_BuscarEliminacion.setVisible(false);
-                btn_BuscarEliminacion.setEnabled(false);
-                lbl_ID_Miembro.setEnabled(false);
-                lbl_ID_Miembro.setVisible(false);
-                tfID.setEnabled(false);
                 tfID.setVisible(false);
                 btn_Buscarcambio.setVisible(false);
-                btn_Buscarcambio.setEnabled(false);
-
-                lblEdad.setVisible(true);
-                CBEdad.setVisible(true);
-                CBEdad.setEnabled(true);
-                coloniaM.setVisible(true);
-                coloniaM.setEnabled(true);
-                CBcoloniasM.setVisible(true);
-                CBcoloniasM.setEnabled(true);
-                calleM.setVisible(true);
-                calleM.setEnabled(true);
-                CBcallesM.setVisible(true);
-                CBcallesM.setEnabled(true);
-                lblesActor.setVisible(true);
-                lblesActor.setEnabled(true);
-                EresActor.setVisible(true);
-                EresActor.setEnabled(true);
+                btn_CambiarMiembro.setVisible(false);
 
 
 
@@ -355,45 +346,28 @@ public class VentanaInicio extends JFrame  implements ActionListener, KeyListene
                 JAltasM.setBackground(new Color(245, 190, 87, 250));
                 btn_Vaciar_Color=new Color(245, 190, 87, 250);
                 btn_Vaciado.setBackground(btn_Vaciar_Color);
-                lblConfirmarMiembro.setVisible(true);
-                btn_AgregarMiembro.setVisible(false);
-                tfnombreM.setEnabled(true);
-                tfApellidoMiembro.setEnabled(true);
 
-                lblEliminarMiembro.setVisible(false);
-                btn_EliminarMiembro.setVisible(false);
-                btn_EliminarMiembro.setEnabled(false);
-                btn_BuscarEliminacion.setVisible(false);
-                btn_BuscarEliminacion.setEnabled(false);
+                metodoMagicoHabilitarComponentes(lblConfirmarMiembro,lblEdad,CBEdad,coloniaM,CBcoloniasM,calleM,CBcallesM,lblesActor,EresActor);
+                btn_CambiarMiembro.setVisible(true);
+                CBEdad.setVisible(true);
+                CBcoloniasM.setVisible(true);
+                CBcallesM.setVisible(true);
+                EresActor.setVisible(true);
 
-                lbl_ID_Miembro.setEnabled(true);
                 lbl_ID_Miembro.setVisible(true);
                 lbl_ID_Miembro.setBounds(860, 230, 50, 40);
-
                 tfID.setEnabled(true);
                 tfID.setVisible(true);
                 tfID.setBounds(920,230, 70, 40);
-
                 btn_Buscarcambio.setVisible(true);
                 btn_Buscarcambio.setEnabled(false);
                 btn_Buscarcambio.setBounds(1000,230, 50, 40);
 
-                lblEdad.setVisible(true);
-                CBEdad.setVisible(true);
-                CBEdad.setEnabled(true);
-                coloniaM.setVisible(true);
-                coloniaM.setEnabled(true);
-                CBcoloniasM.setVisible(true);
-                CBcoloniasM.setEnabled(true);
-                calleM.setVisible(true);
-                calleM.setEnabled(true);
-                CBcallesM.setVisible(true);
-                CBcallesM.setEnabled(true);
-                lblesActor.setVisible(true);
-                lblesActor.setEnabled(true);
-                EresActor.setVisible(true);
-                EresActor.setEnabled(true);
-
+                metodoMagicoParaDesabilitarComponentes(tfnombreM,tfApellidoMiembro,CBEdad,CBcallesM,CBcoloniasM,lblEliminarMiembro,
+                        btn_EliminarMiembro,btn_BuscarEliminacion,btn_AgregarMiembro);
+                btn_AgregarMiembro.setVisible(false);
+                btn_EliminarMiembro.setVisible(false);
+                btn_BuscarEliminacion.setVisible(false);
 
 
             } else if (c==bajasM) {
@@ -447,9 +421,12 @@ public class VentanaInicio extends JFrame  implements ActionListener, KeyListene
             metodoMagicoParaRestablecerComponentes(tfnombreM,tfApellidoMiembro,CBEdad, CBcallesM, CBcoloniasM, EresActor, tfID);
         } else if (c==btn_Vaciado) {
             metodoMagicoParaRestablecerComponentes(tfnombreM,tfApellidoMiembro,CBEdad, CBcallesM, CBcoloniasM, EresActor, tfID);
-            btn_AgregarMiembro.setEnabled(false);
-            btn_BuscarEliminacion.setEnabled(false);
-            btn_EliminarMiembro.setEnabled(false);
+            metodoMagicoParaDesabilitarComponentes(btn_AgregarMiembro,btn_BuscarEliminacion,btn_EliminarMiembro,btn_Buscarcambio,btn_CambiarMiembro);
+            if (!btn_Buscarcambio.isEnabled() && btn_Buscarcambio.isVisible()){
+                metodoMagicoParaDesabilitarComponentes(tfnombreM,tfApellidoMiembro,CBEdad,CBcallesM,CBcoloniasM,lblEliminarMiembro,
+                        btn_EliminarMiembro,btn_BuscarEliminacion,btn_AgregarMiembro);
+            }
+
         } else if (c==btn_AgregarMiembro) { //==========================AQUI SE HACE LA VALIDACION DE QUE TODOS LOS COMPONENTES ESTEN LLENOS======
             if(tfnombreM.getText().equals("")||tfApellidoMiembro.getText().equals("")){
                 btn_AgregarMiembro.setEnabled(false);
@@ -515,6 +492,8 @@ public class VentanaInicio extends JFrame  implements ActionListener, KeyListene
                 ((JCheckBox)x).setEnabled(false);
             }else if (x instanceof JButton) {
                 ((JButton)x).setEnabled(false);
+            }else if (x instanceof JLabel) {
+                ((JLabel)x).setVisible(false);
             }
         }
     }
