@@ -1,5 +1,8 @@
 package vista;
 
+import controlador.MiembroDAO;
+import modelo.Miembro;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
@@ -8,10 +11,17 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.IOException;
+import java.sql.SQLException;
 
 public class VentanaInicio extends JFrame  implements ActionListener, KeyListener {
 
-    int cont_ID=0;
+    MiembroDAO m1 = new MiembroDAO();
+    Miembro M2;
+
+
+    int cont_ID=m1.buscarMiembros("todos").size();
+    int callesID;
+    String[]  Catalogo_Colonias, Catalogo_Calles;
     Color btn_Vaciar_Color = new Color(246, 241, 241);
     JTable table;
     ButtonGroup grupo;
@@ -38,6 +48,8 @@ public class VentanaInicio extends JFrame  implements ActionListener, KeyListene
         setSize(1300,900);
         setLocationRelativeTo(null);
         setVisible(true);
+        LLenarCB_Colonias();
+
 
         //======LLENADO DE DATOS DE EDAD AL SPINER===============
         edades= new String[100];
@@ -160,10 +172,7 @@ public class VentanaInicio extends JFrame  implements ActionListener, KeyListene
         coloniaM.setBounds(325, 320, 100, 30);
         JAltasM.add(coloniaM);
 
-        CBcoloniasM = new JComboBox<String>();
-        CBcoloniasM.addItem("Deportivo");
-        CBcoloniasM.addItem("Chisme");
-        CBcoloniasM.addItem("Palmas");
+        CBcoloniasM = new JComboBox<>(Catalogo_Colonias);
         CBcoloniasM.setBounds(325,360, 200, 30);
         CBcoloniasM.setBackground(new Color(187, 178, 178));
         CBcoloniasM.addActionListener(this);
@@ -175,14 +184,13 @@ public class VentanaInicio extends JFrame  implements ActionListener, KeyListene
         JAltasM.add(calleM);
 
         //===============================SE LLENO EL COMBO BOX DE MANERA ESTATICA, PERO SU LOGICA REAL ES QUE SE LLENE DE LA TABLA DE COLONIAS
-        CBcallesM= new JComboBox<String>();
-        CBcallesM.addItem("Toluca");
-        CBcallesM.addItem("Juan Escutia");
-        CBcallesM.addItem("Lazaro Cardenas");
-        CBcallesM.addItem("Reforma");
+        CBcallesM= new JComboBox<>();
+        CBcallesM.addItem("Selecciona tu calle");
         CBcallesM.setBounds(575, 360, 200, 30);
         CBcallesM.setBackground(new Color(187, 178, 178));
+        CBcallesM.addActionListener(this);
         JAltasM.add(CBcallesM);
+
 
         //==========================================     BOTONES (AGREGAR, ELIMINAR, BUSCAR, CAMBIAR)      ====================================
 
@@ -305,8 +313,8 @@ public class VentanaInicio extends JFrame  implements ActionListener, KeyListene
         tfID = new JTextField();
         tfID.setBounds(385,230, 150, 40);
         tfID.setBackground(new Color(191, 178, 246, 255));
-        tfID.setForeground(new Color(72, 72, 33, 255));
-        tfID.setFont(new Font("Arial", Font.BOLD, 14));
+        tfID.setForeground(new Color(4, 79, 218));
+        tfID.setFont(new Font("Arial", Font.BOLD, 20));
         tfID.addKeyListener(this);
         JAltasM.add(tfID);
 
@@ -382,6 +390,7 @@ public class VentanaInicio extends JFrame  implements ActionListener, KeyListene
             JAltasM.setVisible(true);
 
             if(c==altasM){
+
                 JAltasM.setTitle("DAR DE ALTA MIEMBRO");
                 JAltasM.setBackground(new Color(209, 246, 146, 155));
                 btn_Vaciar_Color=new Color(209, 246, 146, 155);
@@ -390,10 +399,27 @@ public class VentanaInicio extends JFrame  implements ActionListener, KeyListene
                 btn_AgregarMiembro.setVisible(true);
                 CBEdad.setVisible(true);
                 CBcoloniasM.setVisible(true);
+
                 CBcallesM.setVisible(true);
                 EresActor.setVisible(true);
 
-                metodoMagicoParaDesabilitarComponentes(btnPrim,btnUlt,btnAntes,tfCons,btnDespues,lblBuscarPorAutor,TodosMiembros,SiEsActor,NoEsActor,lblEliminarMiembro,btn_EliminarMiembro,btn_BuscarEliminacion,lbl_ID_Miembro,tfID,btn_Buscarcambio,btn_CambiarMiembro);
+                tfnombreM.setEditable(true);
+                tfApellidoMiembro.setEditable(true);
+
+                lbl_ID_Miembro.setVisible(true);
+                lbl_ID_Miembro.setEnabled(true);
+                lbl_ID_Miembro.setBounds(860, 230, 50, 40);
+                tfID.setEnabled(true);
+                tfID.setForeground(Color.red);
+                tfID.setVisible(true);
+
+                tfID.setBackground(new Color(231, 241, 156, 255));
+                tfID.setBounds(920,230, 70, 40);
+                tfID.setEditable(false);
+
+
+
+                metodoMagicoParaDesabilitarComponentes(btnPrim,btnUlt,btnAntes,tfCons,btnDespues,lblBuscarPorAutor,TodosMiembros,SiEsActor,NoEsActor,lblEliminarMiembro,btn_EliminarMiembro,btn_BuscarEliminacion,btn_Buscarcambio,btn_CambiarMiembro);
 
                 btnPrim.setVisible(false);
                 btnUlt.setVisible(false);
@@ -406,7 +432,6 @@ public class VentanaInicio extends JFrame  implements ActionListener, KeyListene
                 SiEsActor.setVisible(false);
                 NoEsActor.setVisible(false);
                 btn_BuscarEliminacion.setVisible(false);
-                tfID.setVisible(false);
                 btn_Buscarcambio.setVisible(false);
                 btn_CambiarMiembro.setVisible(false);
 
@@ -431,6 +456,7 @@ public class VentanaInicio extends JFrame  implements ActionListener, KeyListene
                 btn_BuscarMiembro.setVisible(true);
                 CBEdad.setVisible(true);
                 CBcoloniasM.setVisible(true);
+
                 CBcallesM.setVisible(true);
                 EresActor.setVisible(false);
 
@@ -454,14 +480,20 @@ public class VentanaInicio extends JFrame  implements ActionListener, KeyListene
                 metodoMagicoHabilitarComponentes(lblConfirmarMiembro,lblEdad,CBEdad,coloniaM,CBcoloniasM,calleM,CBcallesM,lblesActor,EresActor);
                 btn_CambiarMiembro.setVisible(true);
                 CBEdad.setVisible(true);
+
                 CBcoloniasM.setVisible(true);
                 CBcallesM.setVisible(true);
                 EresActor.setVisible(true);
 
                 lbl_ID_Miembro.setVisible(true);
                 lbl_ID_Miembro.setBounds(860, 230, 50, 40);
+                tfnombreM.setEditable(true);
+                tfApellidoMiembro.setEditable(true);
                 tfID.setEnabled(true);
+                tfID.setBackground(new Color(245, 190, 87, 250));
                 tfID.setVisible(true);
+                tfID.setEditable(true);
+                tfID.setForeground(new Color(4, 79, 218));
                 tfID.setBounds(920,230, 70, 40);
                 btn_Buscarcambio.setVisible(true);
                 btn_Buscarcambio.setEnabled(false);
@@ -541,18 +573,21 @@ public class VentanaInicio extends JFrame  implements ActionListener, KeyListene
                 NoEsActor.setVisible(false);
                 NoEsActor.setEnabled(false);
 
-
+                lbl_ID_Miembro.setBounds(325,230, 50, 40);
                 lbl_ID_Miembro.setEnabled(true);
                 lbl_ID_Miembro.setVisible(true);
-                lbl_ID_Miembro.setBounds(325,230, 50, 40);
+                tfID.setBounds(385,230, 150, 40);
+                tfID.setEditable(true);
                 tfID.setEnabled(true);
                 tfID.setVisible(true);
-                tfID.setBounds(385,230, 150, 40);
+                tfID.setForeground(new Color(4, 79, 218));
+                tfID.setBackground(new Color(227, 253, 58, 255));
+
 
             }
 
 
-            metodoMagicoParaRestablecerComponentes(tfnombreM,tfApellidoMiembro,CBEdad, CBcallesM, CBcoloniasM, EresActor, tfID);
+            metodoMagicoParaRestablecerComponentes(tfnombreM,tfApellidoMiembro,CBEdad, CBcallesM,CBcoloniasM, EresActor, tfID);
         } else if (c==btn_Vaciado) {
             TodosMiembros.setSelected(true);
             metodoMagicoParaRestablecerComponentes(tfnombreM,tfApellidoMiembro,CBEdad, CBcallesM, CBcoloniasM, EresActor, tfID);
@@ -563,7 +598,7 @@ public class VentanaInicio extends JFrame  implements ActionListener, KeyListene
             }
 
         } else if (c==btn_AgregarMiembro) { //==========================AQUI SE HACE LA VALIDACION DE QUE TODOS LOS COMPONENTES ESTEN LLENOS======
-            if(tfnombreM.getText().equals("")||tfApellidoMiembro.getText().equals("")){
+            if(tfnombreM.getText().equals("")&&tfApellidoMiembro.getText().equals("")){
                 btn_AgregarMiembro.setEnabled(false);
                 JOptionPane.showMessageDialog(getContentPane(), "VERIFICA QUE LOS CAMPOS ESTEN LLENOS");
             } else if (tfnombreM.getText().startsWith(" ") ||tfApellidoMiembro.getText().startsWith(" ")) {
@@ -577,8 +612,19 @@ public class VentanaInicio extends JFrame  implements ActionListener, KeyListene
 
                 btn_AgregarMiembro.setEnabled(false);
             } else{
-                JOptionPane.showMessageDialog(getContentPane(), "MSJ DEL BTN AGREGAR");
-                btn_AgregarMiembro.setEnabled(true);
+                tfID.setText(String.valueOf(cont_ID+1));
+                cont_ID++;
+                JOptionPane.showMessageDialog(getContentPane(), "Se actualizo el contador"+cont_ID);
+                if (EresActor.isSelected()){
+                     M2= new Miembro(cont_ID,tfnombreM.getText(),tfApellidoMiembro.getText(),(byte)(CBEdad.getSelectedIndex()+1),"si",callesID);
+                    m1.agregarMiembro(M2);
+                } else if (!EresActor.isSelected()) {
+                     M2= new Miembro(cont_ID,tfnombreM.getText(),tfApellidoMiembro.getText(),(byte)(CBEdad.getSelectedIndex()+1),"no",callesID);
+                    m1.agregarMiembro(M2);
+
+                }
+
+
                 //========AQUI SE HABILITA EL BOTON CUANDO TODO ESTE LLENO
             }
         } else if (c==btn_BuscarEliminacion) { //==========================AQUI SE HACE LA VALIDACION DE QUE TODOS LOS COMPONENTES ESTEN LLENOS======
@@ -586,25 +632,128 @@ public class VentanaInicio extends JFrame  implements ActionListener, KeyListene
                 btn_EliminarMiembro.setEnabled(false);
 
             } else { //AQUI VA EL METODO DEL BOTON DE ELIMINAR
+                for (int i=0; i<cont_ID; i++){
+                    if(Integer.parseInt(tfID.getText())==m1.buscarMiembros("todos").get(i).getID_Miembro()){
+                        tfnombreM.setBackground(new Color(196, 248, 120, 255));
+                        tfApellidoMiembro.setBackground(new Color(196, 248, 120, 255));
+                        tfnombreM.setEnabled(true);
+                        tfApellidoMiembro.setEnabled(true);
+                        tfnombreM.setEditable(false);
+                        tfApellidoMiembro.setEditable(false);
+                        tfnombreM.setForeground(new Color(4, 79, 218));
+                        tfApellidoMiembro.setForeground(new Color(4, 79, 218));
+                        tfnombreM.setFont(new Font("Arial", Font.BOLD, 20));
+                        tfApellidoMiembro.setFont(new Font("Arial", Font.BOLD, 20));
+                        tfnombreM.setText(m1.buscarMiembros("todos").get(i).getNombre());
+                        tfApellidoMiembro.setText(m1.buscarMiembros("todos").get(i).getApellido());
+
+                        break;
+                    }
+
+                }
+
                 btn_EliminarMiembro.setEnabled(true);
+                btn_BuscarEliminacion.setEnabled(false);
             }
 
-        }else if (c==btn_Buscarcambio) { //==========================AQUI SE HACE LA VALIDACION DE QUE TODOS LOS COMPONENTES ESTEN LLENOS======
+        } else if (c==btn_EliminarMiembro) {
+            if (cont_ID==1) {
+                JOptionPane.showMessageDialog(getContentPane(), "UPS!, DEBES CONTAR CON ALMENOS 1 MIEMBRO ");
+                metodoMagicoParaRestablecerComponentes(tfnombreM, tfID, tfApellidoMiembro, btn_BuscarEliminacion);
+            } else if (Integer.parseInt(tfID.getText()) <= m1.buscarMiembros("todos").get(cont_ID - 1).getID_Miembro() && Integer.parseInt(tfID.getText()) > 0 && cont_ID > 1) {
+
+                m1.eliminarMiembro(tfID.getText());
+                JOptionPane.showMessageDialog(getContentPane(), "Miembro ELIMINADO ");
+                metodoMagicoParaRestablecerComponentes(tfnombreM, tfID, tfApellidoMiembro, btn_BuscarEliminacion);
+                cont_ID--;
+
+            } else {
+                JOptionPane.showMessageDialog(getContentPane(), "El ID ingresado no existe, verificalo nuevamente");
+                btn_BuscarEliminacion.setEnabled(false);
+                metodoMagicoParaRestablecerComponentes(tfnombreM, tfID, tfApellidoMiembro, btn_BuscarEliminacion);
+            }
+
+        } else if (c==btn_Buscarcambio) { //==========================AQUI SE HACE LA VALIDACION DE QUE TODOS LOS COMPONENTES ESTEN LLENOS======
             if(btn_Buscarcambio.isEnabled()==false){
                 btn_CambiarMiembro.setEnabled(false);
 
 
             } else { //AQUI VA EL METODO DEL BOTON DE ELIMINAR
                 metodoMagicoHabilitarComponentes(tfnombreM,tfApellidoMiembro,CBEdad, CBcallesM, CBcoloniasM);
+                for (int i=0; i<cont_ID; i++){
+                    if(Integer.parseInt(tfID.getText())==m1.buscarMiembros("todos").get(i).getID_Miembro()){
+                        tfnombreM.setText(m1.buscarMiembros("todos").get(i).getNombre());
+                        tfApellidoMiembro.setText(m1.buscarMiembros("todos").get(i).getApellido());
+                        CBEdad.setSelectedIndex(m1.buscarMiembros("todos").get(i).getEdad()-1);
+
+
+
+
+
+                        if(m1.buscarMiembros("todos").get(i).getEs_Actor().equals("si")){
+                            EresActor.setSelected(true);
+                        }else {
+                            EresActor.setSelected(false);
+                        }
+
+                        for (int j =0; j<m1.buscarCalle("").size(); j++){
+                            if(m1.buscarCalle("").get(j).getID_Calle()==m1.buscarMiembros("todos").get(i).getCalle()){
+                                CBcoloniasM.setSelectedIndex(m1.buscarCalle("").get(j).getID_Colonia());
+                                break;
+                            }
+                        }//for
+
+                        CBcallesM.setSelectedIndex(m1.buscarMiembros("todos").get(i).getCalle());
+                    }
+
+                }
+
                 btn_CambiarMiembro.setEnabled(true);
+            }
+
+        } else if (c==btn_CambiarMiembro) {
+            cont_ID++;
+            JOptionPane.showMessageDialog(getContentPane(), "Se actualizo el contador"+cont_ID);
+            if (EresActor.isSelected()){
+                M2= new Miembro(cont_ID,tfnombreM.getText(),tfApellidoMiembro.getText(),(byte)(CBEdad.getSelectedIndex()+1),"si",callesID);
+                m1.agregarMiembro(M2);
+            } else if (!EresActor.isSelected()) {
+                M2= new Miembro(cont_ID,tfnombreM.getText(),tfApellidoMiembro.getText(),(byte)(CBEdad.getSelectedIndex()+1),"no",callesID);
+                m1.agregarMiembro(M2);
+
             }
 
         } else if (c==SiEsActor || c==NoEsActor|| c==TodosMiembros) {
             btn_BuscarMiembro.setEnabled(true);
+        } else if (CBcoloniasM.getSelectedIndex()>=0 && c==CBcoloniasM) {
+           int pos=CBcoloniasM.getSelectedIndex();
+            CBcallesM.removeAllItems();
+            LlenarCB_Calles(pos);
+        } else if (CBcallesM.getSelectedIndex()>0) {
+            btn_AgregarMiembro.setEnabled(true);
+            for (int i=0;i<m1.buscarCalle("").size(); i++){
+                if(CBcallesM.getSelectedItem().equals(m1.buscarCalle("").get(i).getNombre_Calle())){
+                    callesID= m1.buscarCalle("").get(i).getID_Calle();
+                    break;
+                }
+            }
         }
     }//ActionPerformed
 
-
+    public void actualizarTablas(JTable tabla){
+        String controlador="com.mysql.cj.jdbc.Driver";
+        String URL= "jdbc:mysql://localhost:3306/poyecto_farmacias";
+        String consulta="SELECT * FROM pacientes";
+        ResultSetTableModel modeloTabla=null;
+        try {
+            modeloTabla = new ResultSetTableModel(controlador,URL,consulta);
+        }  catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        tabla.setModel(modeloTabla);
+    }
     public void metodoMagicoParaRestablecerComponentes(JComponent ... compo){
         for (JComponent x: compo) {
             if(x instanceof JTextField){
@@ -654,19 +803,32 @@ public class VentanaInicio extends JFrame  implements ActionListener, KeyListene
             }
         }
     }
-    public void metodoMagicoDesabilitarComponentes(JComponent ... compo){
-        for (JComponent x: compo) {
-            if(x instanceof JTextField){
-                ((JTextField)x).setEnabled(true);
-            }else if(x instanceof JComboBox){
-                ((JComboBox)x).setEnabled(true);
-            }else if (x instanceof JCheckBox) {
-                ((JCheckBox)x).setEnabled(true);
-            }else if (x instanceof JButton) {
-                ((JButton)x).setEnabled(true);
-            }else if (x instanceof JLabel) {
-                ((JLabel)x).setVisible(false);
-            }
+
+
+
+    public void LLenarCB_Colonias(){
+    int tamaño=m1.buscarColonia("").size();
+    Catalogo_Colonias = new String[tamaño+1];
+    Catalogo_Colonias[0]="Seleccione su colonia";
+    for (int i=1; i<tamaño+1; i++){
+        Catalogo_Colonias[i]=m1.buscarColonia("").get(i-1).getNombre_Colonia();
+    }
+
+    }
+
+    public void LlenarCB_Calles(int pos) {
+        CBcallesM.addItem("Selecciona tu calle");
+        if (pos == 0) {
+
+        } else {
+            int tamaño1 = m1.buscarCalle("").size();
+            for (int i = 0; i < tamaño1; i++) {
+                if (CBcoloniasM.getSelectedIndex() == m1.buscarCalle("").get(i).getID_Colonia()) {
+                    CBcallesM.addItem(m1.buscarCalle("").get(i).getNombre_Calle());
+                }
+
+            }//for
+
         }
     }
 
@@ -677,13 +839,13 @@ public class VentanaInicio extends JFrame  implements ActionListener, KeyListene
             char car= e.getKeyChar();
             if(!(car>64&&car<91||car>96&&car<123||car==32)) {
                 e.consume();
-            }else {
+            }/*else if(CBcoloniasM.getSelectedIndex()>0&&CBcallesM.getSelectedIndex()>0){
                 btn_AgregarMiembro.setEnabled(true);
 
-            }
+            }*/
         } else if (c== tfID) {
             char car= e.getKeyChar();
-            if(!(car>48&&car<58)) {
+            if(!(car>47&&car<58)) {
                 e.consume();
             }else {
                 btn_BuscarEliminacion.setEnabled(true);

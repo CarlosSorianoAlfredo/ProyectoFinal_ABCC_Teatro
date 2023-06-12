@@ -12,7 +12,7 @@ public class ConexionBD {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
 
-            String URL = "jdbc:mysql://localhost:3306/BD_ESCUELA_TOPICOS";
+            String URL = "jdbc:mysql://localhost:3306/Empresa_Teatro";
 
             conexion = DriverManager.getConnection(URL, "root", "Alfredocarlitos88");
 
@@ -37,7 +37,7 @@ public class ConexionBD {
             if(stm.executeUpdate(instruccionDML)>=1)
                 result=true;
         } catch (SQLException e) {
-            System.out.println("Error en instruccion SQL");
+            System.out.println("Error en instruccion DMl");
         }
         return result;
     }

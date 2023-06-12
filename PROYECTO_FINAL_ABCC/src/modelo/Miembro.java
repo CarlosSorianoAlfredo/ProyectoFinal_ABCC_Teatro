@@ -1,21 +1,21 @@
 package modelo;
 
-import com.sun.org.apache.xml.internal.resolver.helpers.PublicId;
+
 
 public class Miembro {
-    private int ID_Miembro;
+    private int ID_Miembro, Calle;
+    private byte Edad;
     private String Nombre;
     private String Apellido;
     private String Es_Actor;
-    private String Calle, Colonia;
 
-    public Miembro(int ID_Miembro, String nombre, String apellido, String es_Actor, String calle, String colonia) {
+    public Miembro(int ID_Miembro, String nombre, String apellido,byte edad, String es_Actor, int calle) {
         this.ID_Miembro = ID_Miembro;
         Nombre = nombre;
         Apellido = apellido;
         Es_Actor = es_Actor;
         Calle = calle;
-        Colonia = colonia;
+        Edad = edad;
     }
     public Miembro(){}
 
@@ -25,6 +25,14 @@ public class Miembro {
 
     public void setID_Miembro(int ID_Miembro) {
         this.ID_Miembro = ID_Miembro;
+    }
+
+    public byte getEdad() {
+        return Edad;
+    }
+
+    public void setEdad(byte edad) {
+        Edad = edad;
     }
 
     public String getNombre() {
@@ -51,21 +59,15 @@ public class Miembro {
         Es_Actor = es_Actor;
     }
 
-    public String getCalle() {
+    public int getCalle() {
         return Calle;
     }
 
-    public void setCalle(String calle) {
+    public void setCalle(int calle) {
         Calle = calle;
     }
 
-    public String getColonia() {
-        return Colonia;
-    }
 
-    public void setColonia(String colonia) {
-        Colonia = colonia;
-    }
 
 
 

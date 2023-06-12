@@ -1,6 +1,8 @@
 package controlador;
 
 import ConexionBD.ConexionBD;
+import modelo.Calle;
+import modelo.Colonia;
 import modelo.Miembro;
 
 import java.sql.ResultSet;
@@ -18,11 +20,75 @@ public class MiembroDAO {
         this.contadorAlumnos = contadorAlumnos;
     }
 
-    ConexionBD conexion = new ConexionBD();
+    ConexionBD conexion = new ConexionBD();;
+
+
+    public ArrayList<Calle> buscarCalle(String filtro){
+        ArrayList<Calle> listaCalle= new ArrayList<>();
+        String sql="SELECT * FROM Calles";
+
+        ResultSet rs= conexion.ejecutarConsultaSQL(sql);
+        try {
+            rs.next();
+
+            do{
+                int ID= rs.getInt(1);
+                String nom_Calle=rs.getString(2);
+                int ID_Col= rs.getInt(3);
+
+                listaCalle.add(new Calle(ID,nom_Calle,ID_Col));
+
+            }while(rs.next());
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return listaCalle;
+}
+
+    public ArrayList<Colonia> buscarColonia(String filtro){
+        ArrayList<Colonia> listaColonia= new ArrayList<>();
+        String sql="SELECT * FROM Colonias";
+
+        ResultSet rs= conexion.ejecutarConsultaSQL(sql);
+        try {
+            rs.next();
+
+            do{
+                int ID_Col= rs.getInt(1);
+                String nom_Col=rs.getString(2);
+
+
+                listaColonia.add(new Colonia(ID_Col,nom_Col));
+
+            }while(rs.next());
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return listaColonia;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     //=============Metodos ABCC (CRUD)================
 
     //================Altas=====================
-    public boolean agregarAlumno(Miembro a){
+    public boolean agregarMiembro(Miembro a){
         boolean res= false;
         /*
         PROCESO PARA ALTAS EN MySQL
@@ -31,18 +97,18 @@ public class MiembroDAO {
 
          */
         //==============================  CREAR LA TABLA EN SQL PARA PODER ACOMODAR LOS DATOS DE ESTA INSTRUCCION    =============
-        String sql= "insert into Miembros values('"+a.getNumControl()+"','"+a.getNombre()+"', '"+a.getPrimerAp()+"', '"+a.getSegundoAp()+"','"+a.getEdad()+"', '"+a.getSemestre()+"', '"+a.getCarrera()+"')";
+        String sql= "insert into Miembros values('"+a.getID_Miembro()+"','"+a.getNombre()+"', '"+a.getApellido()+"', '"+a.getEdad()+"', '"+a.getEs_Actor()+"', '"+a.getCalle()+"')";
         res= conexion.ejecutarInstruccionDML(sql);
         return res;
     }
 
 
     //================Bajas=====================
-    public boolean eliminarAlumno(String numControl){
+    public boolean eliminarMiembro(String IDMiembro){
         boolean res = false;
 
         //   DELETE from Alumnos where NumControl = '01';
-        String sql= "DELETE from Alumnos where NumControl = '"+numControl+"'";
+        String sql= "DELETE from Miembros where ID_Miembro = '"+IDMiembro+"'";
 
         res = conexion.ejecutarInstruccionDML(sql);
 
@@ -50,55 +116,104 @@ public class MiembroDAO {
     }
 
     //================Cambios===================
-    public boolean actualizarAlumno(Miembro a){
+    public boolean actualizarMiembro(Miembro a){
         boolean res = false;
-        //UPDATE Alumnos SET Nombre='x', PrimerAp='x', SegundoAp='x', Edad=10, Semestre=2, Carrera='x', WHERE NumControl = '"a.getNumcontrol"'";
-        String sql="UPDATE Alumnos SET Nombre='"+a.getNombre() +
-                "', PrimerAp='"+a.getPrimerAp() +
-                "', SegundoAp='"+a.getSegundoAp() +
+
+        String sql="UPDATE Miembros SET Nombre='"+a.getNombre() +
+                "', Apellido='"+a.getApellido()+
                 "', Edad="+a.getEdad() +
-                ", Semestre="+a.getSemestre() +
-                ", Carrera='"+a.getCarrera() +
-                "' WHERE NumControl = '"+a.getNumControl()+"'"; //Esta linea es para poder seleccionar el objeto a modificar por medio de su numero de control
+                ", Calle='"+a.getCalle() +
+                "' WHERE ID_Miembro = '"+a.getID_Miembro()+"'"; //Esta linea es para poder seleccionar el objeto a modificar por medio de su numero del ID
         res=conexion.ejecutarInstruccionDML(sql);
         return res;
     }
 
     //================Consultas=================
-    public Miembro buscarAlumno(String filtro){
+    public Miembro callese(String Es_Actor){
 
         return null;
     }
 
-    public ArrayList<Miembro> buscarAlumnos(String filtro){
-        ArrayList<Miembro> listaAlumnos= new ArrayList<>();
-        contadorAlumnos=0;
-        String sql = "SELECT * FROM Alumnos";
+    public ArrayList<Miembro> buscarMiembros(String filtro){
+        ArrayList<Miembro> listaMiembros= new ArrayList<>();
+        if (filtro.equals("todos")) {
+            String sql = "SELECT * FROM Miembros";
 
-        ResultSet rs =conexion.ejecutarConsultaSQL(sql);
+            ResultSet rs = conexion.ejecutarConsultaSQL(sql);
 
-        try {
-            rs.next();
+            try {
+                rs.next();
 
-            do {
-                String nc = rs.getString(1);//Esta columna es la primera
-                String n = rs.getString("Nombre");
-                String pa = rs.getString(3);
-                String sa = rs.getString(4);
-                byte e = rs.getByte(5);
-                byte s = rs.getByte(6);
-                String c = rs.getString(7);
+                do {
+                    int id = rs.getInt(1);//Esta columna es el ID
+                    String n = rs.getString(2);
+                    String Ap = rs.getString(3);
+                    byte e = rs.getByte(4);
+                    String AC = rs.getString(5);
+                    int ca = rs.getInt(6);
 
-                listaAlumnos.add(new Miembro(nc, n, pa, sa, e, s, c));
-                contadorAlumnos++;
 
-            }while(rs.next());
+                    listaMiembros.add(new Miembro(id, n, Ap, e, AC,ca));
 
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+
+                } while (rs.next());
+
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+
+        } else if (filtro.equals("si")) {
+            String sql = "SELECT * FROM Miembros WHERE Es_Actor = '"+"si"+"'";
+
+            ResultSet rs = conexion.ejecutarConsultaSQL(sql);
+
+            try {
+                rs.next();
+
+                do {
+                    int id = rs.getInt(1);//Esta columna es el ID
+                    String n = rs.getString(2);
+                    String Ap = rs.getString(3);
+                    byte e = rs.getByte(4);
+                    String AC = rs.getString(5);
+                    int ca = rs.getInt(6);
+
+
+                    listaMiembros.add(new Miembro(id, n, Ap, e, AC,ca));
+
+
+                } while (rs.next());
+
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        } else if (filtro.equals("no")) {
+            String sql = "SELECT * FROM Miembros WHERE Es_Actor = '"+"no"+"'";
+
+            ResultSet rs = conexion.ejecutarConsultaSQL(sql);
+
+            try {
+                rs.next();
+
+                do {
+                    int id = rs.getInt(1);//Esta columna es el ID
+                    String n = rs.getString(2);
+                    String Ap = rs.getString(3);
+                    byte e = rs.getByte(4);
+                    String AC = rs.getString(5);
+                    int ca = rs.getInt(6);
+
+
+                    listaMiembros.add(new Miembro(id, n, Ap, e, AC,ca));
+
+
+                } while (rs.next());
+
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
         }
-
-        return listaAlumnos;
+        return listaMiembros;
     }
 
 }//clase alumnoDAO
