@@ -50,19 +50,19 @@ public class ConexionBD {
     //metodo para ABC (Altas, Bajas, Cambios)
     public static boolean AgregarMiembro(Miembro a){
         try {
-            pstm = conexion.prepareStatement("insert into miembros values(int,String,String,byte,String,int)");
-
+            pstm = conexion.prepareStatement("insert into miembros values(?,?,?,?,?,?)");
+            System.out.println("METODO DE AGREGAR MIEMBRO CONEXIONBD "+a.getID_Miembro() + a.getNombre() + a.getApellido() + a.getEdad() + a.getEs_Actor() + a.getCalle());
             pstm.setInt(1,a.getID_Miembro());
+            System.out.println(a.getID_Miembro());
             pstm.setString(2, a.getNombre());
             pstm.setString(3,a.getApellido());
             pstm.setByte(4,a.getEdad());
             pstm.setString(5,a.getEs_Actor());
             pstm.setInt(6,a.getCalle());
-
-        pstm.execute();
-        return true;
+            pstm.executeUpdate();
+            return true;
         } catch (SQLException e) {
-            System.out.println("Error en instruccion DMl");
+            System.out.println("Error en AgregarPacienete CB.java");
         }
         return false;
     }

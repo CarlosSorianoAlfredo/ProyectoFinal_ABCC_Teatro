@@ -609,7 +609,7 @@ public class VentanaInicio extends JFrame  implements ActionListener, KeyListene
 
         } else if (c==btn_AgregarMiembro ) {
             //==========================AQUI SE HACE LA VALIDACION DE QUE TODOS LOS COMPONENTES ESTEN LLENOS======
-            if(tfnombreM.getText().equals("")&&tfApellidoMiembro.getText().equals("")){
+            if(tfnombreM.getText().equals("")&&tfApellidoMiembro.getText().equals("")||tfnombreM.getText().equals("")||tfApellidoMiembro.getText().equals("")){
                 btn_AgregarMiembro.setEnabled(false);
                 JOptionPane.showMessageDialog(getContentPane(), "VERIFICA QUE LOS CAMPOS ESTEN LLENOS");
             } else if (tfnombreM.getText().startsWith(" ") ||tfApellidoMiembro.getText().startsWith(" ")) {
