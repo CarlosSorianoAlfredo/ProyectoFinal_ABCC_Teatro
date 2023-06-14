@@ -1,52 +1,46 @@
 package modelo;
 
 public class Usuario {
-	private byte noUsuario;
-	private String nombre;
-	private String contraseña;
-	private String tipo;
-	
-	public Usuario(byte noUsuario, String nombre, String contraseña, String tipo) {
-		this.noUsuario = noUsuario;
-		this.nombre = nombre;
-		this.contraseña = contraseña;
-		this.tipo = tipo;
-	}
-	
+	private String Usuario;
+	private String Contraseña;
+	private Byte NoUsuario;
 
-
-	public byte getNoUsuario() {
-		return noUsuario;
+	public Usuario(Byte noUsuario,String usuario, String contraseña) {
+		Usuario = usuario;
+		Contraseña = contraseña;
+		NoUsuario = noUsuario;
 	}
-	public void setNoUsuario(byte noUsuario) {
-		this.noUsuario = noUsuario;
-	}
-
 
 	public String getNombre() {
-		return nombre;
+		return Usuario;
 	}
-	public void setNombre(String nombre) {
-		this.nombre = nombre;
+	public void setNombre(String Usuario) {
+		this.Usuario = Usuario;
 	}
 
 
 	public String getContraseña() {
-		return contraseña;
+		return Contraseña;
 	}
 	public void setContraseña(String contraseña) {
-		this.contraseña = contraseña;
+		this.Contraseña = contraseña;
 	}
 
-	
-	public String getTipo() {
-		return tipo;
-	}
-	public void setTipo(String tipo) {
-		this.tipo = tipo;
+	public String getUsuario() {
+		return Usuario;
 	}
 
+	public void setUsuario(String usuario) {
+		Usuario = usuario;
+	}
 
+	public Byte getNoUsuario() {
+		return NoUsuario;
+	}
+
+	public void setNoUsuario(Byte noUsuario) {
+		NoUsuario = noUsuario;
+	}
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub

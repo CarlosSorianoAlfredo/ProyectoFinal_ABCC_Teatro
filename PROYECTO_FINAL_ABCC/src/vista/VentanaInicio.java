@@ -1,6 +1,7 @@
 package vista;
 
 import controlador.MiembroDAO;
+import modelo.Calle;
 import modelo.Miembro;
 
 import javax.swing.*;
@@ -12,6 +13,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 public class VentanaInicio extends JFrame  implements ActionListener, KeyListener {
 
@@ -19,9 +21,13 @@ public class VentanaInicio extends JFrame  implements ActionListener, KeyListene
     Miembro M2;
 
 
-    int cont_ID=m1.buscarMiembros("todos").size();
+    int contMiembros=m1.buscarMiembros("todos").size();
+    int cont_ID=m1.buscarMiembros("todos").get(contMiembros-1).getID_Miembro();
+    int cont_ID_Cambio;
+    int num;
+
     int callesID;
-    String[]  Catalogo_Colonias, Catalogo_Calles;
+    String[]  Catalogo_Colonias;
     Color btn_Vaciar_Color = new Color(246, 241, 241);
     JTable table;
     ButtonGroup grupo;
@@ -37,7 +43,7 @@ public class VentanaInicio extends JFrame  implements ActionListener, KeyListene
     JTextField tfnombreM, tfApellidoMiembro, tfID,tfCons;
     JComboBox<String> CBcallesM, CBcoloniasM, CBEdad;
     JButton btn_AgregarMiembro,btn_EliminarMiembro,btn_BuscarMiembro, btn_CambiarMiembro, btn_Vaciado, btn_BuscarEliminacion, btn_Buscarcambio,btnPrim,btnAntes,btnDespues,btnUlt;
-    String[] columnNames = {"No. De Control", "Nombre", "Edad", "Apellido Paterno", "Apellido Materno", "Semestre", "Carrera"};
+    String[] columnNames = {"ID_Miembro", "Nombre", "Apellido", "Edad", "Es_Actor", "Calle"};
     DefaultTableModel model = new DefaultTableModel(columnNames,0);
     JScrollPane scrollPane;
 
@@ -342,6 +348,7 @@ public class VentanaInicio extends JFrame  implements ActionListener, KeyListene
 
         tfCons= new JTextField();
         tfCons.setBounds(1000, 230, 50, 40);
+        tfCons.setText("0");
         JAltasM.add(tfCons);
 
         btnDespues= new JButton(">");
@@ -388,6 +395,7 @@ public class VentanaInicio extends JFrame  implements ActionListener, KeyListene
         Component c=(Component) e.getSource();
         if(c==altasM||c==bajasM|| c==cambiosM||c==consultasM){
             JAltasM.setVisible(true);
+            actualizarTablas(table);
 
             if(c==altasM){
 
@@ -447,13 +455,15 @@ public class VentanaInicio extends JFrame  implements ActionListener, KeyListene
                 btnPrim.setVisible(true);
                 btnUlt.setVisible(true);
                 btnAntes.setVisible(true);
-                tfCons.setVisible(false);
+                tfCons.setVisible(true);
+                tfCons.setEnabled(true);
                 btnDespues.setVisible(true);
                 SiEsActor.setVisible(true);
                 NoEsActor.setVisible(true);
                 TodosMiembros.setVisible(true);
                 TodosMiembros.setSelected(true);
                 btn_BuscarMiembro.setVisible(true);
+                btn_BuscarMiembro.setEnabled(true);
                 CBEdad.setVisible(true);
                 CBcoloniasM.setVisible(true);
 
@@ -589,7 +599,7 @@ public class VentanaInicio extends JFrame  implements ActionListener, KeyListene
 
             metodoMagicoParaRestablecerComponentes(tfnombreM,tfApellidoMiembro,CBEdad, CBcallesM,CBcoloniasM, EresActor, tfID);
         } else if (c==btn_Vaciado) {
-            TodosMiembros.setSelected(true);
+            //TodosMiembros.setSelected(true);
             metodoMagicoParaRestablecerComponentes(tfnombreM,tfApellidoMiembro,CBEdad, CBcallesM, CBcoloniasM, EresActor, tfID);
             metodoMagicoParaDesabilitarComponentes(btn_AgregarMiembro,btn_BuscarEliminacion,btn_EliminarMiembro,btn_Buscarcambio,btn_CambiarMiembro,btn_BuscarMiembro);
             if (!btn_Buscarcambio.isEnabled() && btn_Buscarcambio.isVisible()){
@@ -597,7 +607,8 @@ public class VentanaInicio extends JFrame  implements ActionListener, KeyListene
                         btn_EliminarMiembro,btn_BuscarEliminacion,btn_AgregarMiembro);
             }
 
-        } else if (c==btn_AgregarMiembro) { //==========================AQUI SE HACE LA VALIDACION DE QUE TODOS LOS COMPONENTES ESTEN LLENOS======
+        } else if (c==btn_AgregarMiembro ) {
+            //==========================AQUI SE HACE LA VALIDACION DE QUE TODOS LOS COMPONENTES ESTEN LLENOS======
             if(tfnombreM.getText().equals("")&&tfApellidoMiembro.getText().equals("")){
                 btn_AgregarMiembro.setEnabled(false);
                 JOptionPane.showMessageDialog(getContentPane(), "VERIFICA QUE LOS CAMPOS ESTEN LLENOS");
@@ -614,16 +625,18 @@ public class VentanaInicio extends JFrame  implements ActionListener, KeyListene
             } else{
                 tfID.setText(String.valueOf(cont_ID+1));
                 cont_ID++;
-                JOptionPane.showMessageDialog(getContentPane(), "Se actualizo el contador"+cont_ID);
+                contMiembros++;
+
                 if (EresActor.isSelected()){
-                     M2= new Miembro(cont_ID,tfnombreM.getText(),tfApellidoMiembro.getText(),(byte)(CBEdad.getSelectedIndex()+1),"si",callesID);
+                    M2= new Miembro(cont_ID,tfnombreM.getText(),tfApellidoMiembro.getText(),(byte)(CBEdad.getSelectedIndex()+1),"si",callesID);
                     m1.agregarMiembro(M2);
+                    actualizarTablas(table);
                 } else if (!EresActor.isSelected()) {
-                     M2= new Miembro(cont_ID,tfnombreM.getText(),tfApellidoMiembro.getText(),(byte)(CBEdad.getSelectedIndex()+1),"no",callesID);
+                    M2= new Miembro(cont_ID,tfnombreM.getText(),tfApellidoMiembro.getText(),(byte)(CBEdad.getSelectedIndex()+1),"no",callesID);
                     m1.agregarMiembro(M2);
+                    actualizarTablas(table);
 
                 }
-
 
                 //========AQUI SE HABILITA EL BOTON CUANDO TODO ESTE LLENO
             }
@@ -632,7 +645,7 @@ public class VentanaInicio extends JFrame  implements ActionListener, KeyListene
                 btn_EliminarMiembro.setEnabled(false);
 
             } else { //AQUI VA EL METODO DEL BOTON DE ELIMINAR
-                for (int i=0; i<cont_ID; i++){
+                for (int i=0; i<contMiembros; i++){
                     if(Integer.parseInt(tfID.getText())==m1.buscarMiembros("todos").get(i).getID_Miembro()){
                         tfnombreM.setBackground(new Color(196, 248, 120, 255));
                         tfApellidoMiembro.setBackground(new Color(196, 248, 120, 255));
@@ -657,15 +670,17 @@ public class VentanaInicio extends JFrame  implements ActionListener, KeyListene
             }
 
         } else if (c==btn_EliminarMiembro) {
-            if (cont_ID==1) {
+
+            if (contMiembros==1) {
                 JOptionPane.showMessageDialog(getContentPane(), "UPS!, DEBES CONTAR CON ALMENOS 1 MIEMBRO ");
                 metodoMagicoParaRestablecerComponentes(tfnombreM, tfID, tfApellidoMiembro, btn_BuscarEliminacion);
-            } else if (Integer.parseInt(tfID.getText()) <= m1.buscarMiembros("todos").get(cont_ID - 1).getID_Miembro() && Integer.parseInt(tfID.getText()) > 0 && cont_ID > 1) {
+            } else if (Integer.parseInt(tfID.getText()) <= m1.buscarMiembros("todos").get(contMiembros - 1).getID_Miembro() && Integer.parseInt(tfID.getText()) > 0 && contMiembros > 1) {
 
                 m1.eliminarMiembro(tfID.getText());
                 JOptionPane.showMessageDialog(getContentPane(), "Miembro ELIMINADO ");
                 metodoMagicoParaRestablecerComponentes(tfnombreM, tfID, tfApellidoMiembro, btn_BuscarEliminacion);
-                cont_ID--;
+                contMiembros--;
+                actualizarTablas(table);
 
             } else {
                 JOptionPane.showMessageDialog(getContentPane(), "El ID ingresado no existe, verificalo nuevamente");
@@ -678,72 +693,231 @@ public class VentanaInicio extends JFrame  implements ActionListener, KeyListene
                 btn_CambiarMiembro.setEnabled(false);
 
 
-            } else { //AQUI VA EL METODO DEL BOTON DE ELIMINAR
+            }else  {
                 metodoMagicoHabilitarComponentes(tfnombreM,tfApellidoMiembro,CBEdad, CBcallesM, CBcoloniasM);
-                for (int i=0; i<cont_ID; i++){
-                    if(Integer.parseInt(tfID.getText())==m1.buscarMiembros("todos").get(i).getID_Miembro()){
+                for (int i=0; i<contMiembros; i++){
+                    if (i==contMiembros){
+                        JOptionPane.showMessageDialog(getContentPane(),"ESE MIEMBRO NO EXISTE");
+                    }else if(Integer.parseInt(tfID.getText())==m1.buscarMiembros("todos").get(i).getID_Miembro()){
+                        cont_ID_Cambio=Integer.parseInt(tfID.getText());
                         tfnombreM.setText(m1.buscarMiembros("todos").get(i).getNombre());
                         tfApellidoMiembro.setText(m1.buscarMiembros("todos").get(i).getApellido());
                         CBEdad.setSelectedIndex(m1.buscarMiembros("todos").get(i).getEdad()-1);
 
-
-
-
-
                         if(m1.buscarMiembros("todos").get(i).getEs_Actor().equals("si")){
                             EresActor.setSelected(true);
+
+
                         }else {
                             EresActor.setSelected(false);
                         }
-
                         for (int j =0; j<m1.buscarCalle("").size(); j++){
                             if(m1.buscarCalle("").get(j).getID_Calle()==m1.buscarMiembros("todos").get(i).getCalle()){
                                 CBcoloniasM.setSelectedIndex(m1.buscarCalle("").get(j).getID_Colonia());
+                                JOptionPane.showMessageDialog(getContentPane(),"COLONIA A INGRESAR EN LA CB"+m1.buscarCalle("").get(j).getID_Colonia());
                                 break;
                             }
                         }//for
 
-                        CBcallesM.setSelectedIndex(m1.buscarMiembros("todos").get(i).getCalle());
+                        for(int n=0; n<CBcallesM.getItemCount(); n++){
+                            int m=m1.buscarMiembros("todos").get(i).getCalle();
+                            JOptionPane.showMessageDialog(getContentPane(),"VALOR DE (M) DEL id CALLE"+ m);
+                            String compa=m1.buscarCalle("").get(m-1).getNombre_Calle();
+                            JOptionPane.showMessageDialog(getContentPane(),"NOMBRE DE LACALLE"+ compa);
+
+                            if(compa.equals(CBcallesM.getItemAt(n))){
+                                CBcallesM.setSelectedIndex(n);
+                                break;
+                            }
+                        } break;
+
                     }
-
                 }
-
+                JOptionPane.showMessageDialog(getContentPane(), cont_ID_Cambio );
                 btn_CambiarMiembro.setEnabled(true);
+                metodoMagicoParaDesabilitarComponentes(btn_AgregarMiembro,btn_EliminarMiembro, btn_BuscarMiembro);
             }
 
         } else if (c==btn_CambiarMiembro) {
-            cont_ID++;
-            JOptionPane.showMessageDialog(getContentPane(), "Se actualizo el contador"+cont_ID);
+            metodoMagicoParaDesabilitarComponentes(btn_AgregarMiembro,btn_EliminarMiembro, btn_BuscarMiembro);
+
             if (EresActor.isSelected()){
-                M2= new Miembro(cont_ID,tfnombreM.getText(),tfApellidoMiembro.getText(),(byte)(CBEdad.getSelectedIndex()+1),"si",callesID);
-                m1.agregarMiembro(M2);
+                M2= new Miembro(cont_ID_Cambio,tfnombreM.getText(),tfApellidoMiembro.getText(),(byte)(CBEdad.getSelectedIndex()+1),"si",callesID);
+                if (!tfnombreM.getText().equals("") && !tfApellidoMiembro.getText().equals("") ){
+                    m1.actualizarMiembro(M2);
+                }else{
+                    JOptionPane.showMessageDialog(getContentPane(), "NOmbre vacio" );
+                }
+                actualizarTablas(table);
+
             } else if (!EresActor.isSelected()) {
-                M2= new Miembro(cont_ID,tfnombreM.getText(),tfApellidoMiembro.getText(),(byte)(CBEdad.getSelectedIndex()+1),"no",callesID);
-                m1.agregarMiembro(M2);
+                M2= new Miembro(cont_ID_Cambio,tfnombreM.getText(),tfApellidoMiembro.getText(),(byte)(CBEdad.getSelectedIndex()+1),"no",callesID);
+                if (!tfnombreM.getText().equals("") && !tfApellidoMiembro.getText().equals("") ){
+                    m1.actualizarMiembro(M2);
+                }else{
+                    JOptionPane.showMessageDialog(getContentPane(), "NOmbre vacio" );
+                }
+
+                actualizarTablas(table);
 
             }
-
-        } else if (c==SiEsActor || c==NoEsActor|| c==TodosMiembros) {
-            btn_BuscarMiembro.setEnabled(true);
         } else if (CBcoloniasM.getSelectedIndex()>=0 && c==CBcoloniasM) {
-           int pos=CBcoloniasM.getSelectedIndex();
+            int pos=CBcoloniasM.getSelectedIndex();
             CBcallesM.removeAllItems();
             LlenarCB_Calles(pos);
         } else if (CBcallesM.getSelectedIndex()>0) {
-            btn_AgregarMiembro.setEnabled(true);
+            if(!tfnombreM.getText().equals("") && !tfApellidoMiembro.getText().equals("")&& CBcoloniasM.getSelectedIndex()!=0){
+                btn_AgregarMiembro.setEnabled(true);
+
+            }
+
             for (int i=0;i<m1.buscarCalle("").size(); i++){
                 if(CBcallesM.getSelectedItem().equals(m1.buscarCalle("").get(i).getNombre_Calle())){
                     callesID= m1.buscarCalle("").get(i).getID_Calle();
                     break;
                 }
             }
+        }else if (btn_BuscarMiembro == c) {
+            metodoMagicoHabilitarComponentes(tfnombreM,tfApellidoMiembro,CBEdad,CBcoloniasM,CBcallesM);
+            tfnombreM.setText(m1.buscarMiembros("todos").get(0).getNombre());
+            tfApellidoMiembro.setText(m1.buscarMiembros("todos").get(0).getApellido());
+            CBEdad.setSelectedIndex(m1.buscarMiembros("todos").get(0).getEdad()-1);
+            //=============
+
+            for (int j = 0; j < m1.buscarCalle("").size(); j++) {
+                if (m1.buscarCalle("").get(j).getID_Calle() == m1.buscarMiembros("todos").get(num).getCalle()) {
+                    CBcoloniasM.setSelectedIndex(m1.buscarCalle("").get(j).getID_Colonia());
+
+                }
+            }//for
+
+            for (int n = 0; n < CBcallesM.getItemCount(); n++) {
+                int m = m1.buscarMiembros("todos").get(num).getCalle();
+                String compa = m1.buscarCalle("").get(m - 1).getNombre_Calle();
+
+                if (compa.equals(CBcallesM.getItemAt(n))) {
+                    CBcallesM.setSelectedIndex(n);
+
+                }
+            }
+
+            tfCons.setText("1");
+
+        }else if (c==btnPrim) {
+            metodoMagicoParaRestablecerComponentes(tfnombreM,tfApellidoMiembro,CBEdad, CBcallesM, CBcoloniasM);
+            tfnombreM.setText(m1.buscarMiembros("todos").get(0).getNombre());
+            tfApellidoMiembro.setText(m1.buscarMiembros("todos").get(0).getApellido());
+            CBEdad.setSelectedIndex(m1.buscarMiembros("todos").get(0).getEdad()-1);
+
+            for (int j = 0; j < m1.buscarCalle("").size(); j++) {
+                if (m1.buscarCalle("").get(j).getID_Calle() == m1.buscarMiembros("todos").get(num).getCalle()) {
+                    CBcoloniasM.setSelectedIndex(m1.buscarCalle("").get(j).getID_Colonia());
+
+                }
+            }//for
+
+            for (int n = 0; n < CBcallesM.getItemCount(); n++) {
+                int m = m1.buscarMiembros("todos").get(num).getCalle();
+                String compa = m1.buscarCalle("").get(m - 1).getNombre_Calle();
+
+                if (compa.equals(CBcallesM.getItemAt(n))) {
+                    CBcallesM.setSelectedIndex(n);
+
+                }
+            }
+            tfCons.setText("1");
+        }else if(c==btnDespues){
+            metodoMagicoParaRestablecerComponentes(tfnombreM,tfApellidoMiembro,CBEdad, CBcallesM, CBcoloniasM);
+            if(Integer.parseInt(tfCons.getText())>=m1.buscarMiembros("todos").size()){
+
+            }else {
+                tfnombreM.setText(m1.buscarMiembros("todos").get((Integer.parseInt(tfCons.getText()))).getNombre());
+                tfApellidoMiembro.setText(m1.buscarMiembros("todos").get((Integer.parseInt(tfCons.getText()))).getApellido());
+                CBEdad.setSelectedIndex(m1.buscarMiembros("todos").get((Integer.parseInt(tfCons.getText()))).getEdad()-1);
+                tfCons.setText(String.valueOf((Integer.parseInt(tfCons.getText()))+1));
+
+                for (int j = 0; j < m1.buscarCalle("").size(); j++) {
+                    if (m1.buscarCalle("").get(j).getID_Calle() == m1.buscarMiembros("todos").get(num).getCalle()) {
+                        CBcoloniasM.setSelectedIndex(m1.buscarCalle("").get(j).getID_Colonia());
+
+                    }
+                }//for
+
+                for (int n = 0; n < CBcallesM.getItemCount(); n++) {
+                    int m = m1.buscarMiembros("todos").get(num).getCalle();
+                    String compa = m1.buscarCalle("").get(m-1).getNombre_Calle();
+
+                    if (compa.equals(CBcallesM.getItemAt(n))) {
+                        CBcallesM.setSelectedIndex(n);
+
+                    }
+                }
+
+            }
+        } else if (c==btnAntes) {
+            metodoMagicoParaRestablecerComponentes(tfnombreM,tfApellidoMiembro,CBEdad, CBcallesM, CBcoloniasM);
+            if(Integer.parseInt(tfCons.getText())<=1){
+            }else {
+                tfCons.setText(String.valueOf(Integer.parseInt(tfCons.getText())-1));
+
+                tfnombreM.setText(m1.buscarMiembros("todos").get(((Integer.parseInt((tfCons.getText()))))-1).getNombre());
+                tfApellidoMiembro.setText(m1.buscarMiembros("todos").get(((Integer.parseInt((tfCons.getText()))))-1).getApellido());
+                CBEdad.setSelectedIndex(m1.buscarMiembros("todos").get(((Integer.parseInt((tfCons.getText()))))-1).getEdad()-1);
+
+                for (int j = 0; j < m1.buscarCalle("").size(); j++) {
+                    if (m1.buscarCalle("").get(j).getID_Calle() == m1.buscarMiembros("todos").get(num).getCalle()) {
+                        CBcoloniasM.setSelectedIndex(m1.buscarCalle("").get(j).getID_Colonia());
+
+                    }
+                }//for
+                for (int n = 0; n < CBcallesM.getItemCount(); n++) {
+                    int m = m1.buscarMiembros("todos").get(num).getCalle();
+                    String compa = m1.buscarCalle("").get(m - 1).getNombre_Calle();
+                    if (compa.equals(CBcallesM.getItemAt(n))) {
+                        CBcallesM.setSelectedIndex(n);
+
+                    }
+                }
+
+            }
+
+
+        } else if (c==btnUlt) {
+            metodoMagicoParaRestablecerComponentes(tfnombreM,tfApellidoMiembro,CBEdad, CBcallesM, CBcoloniasM);
+            tfnombreM.setText(m1.buscarMiembros("todos").get(m1.buscarMiembros("todos").size()-1).getNombre());
+            tfApellidoMiembro.setText(m1.buscarMiembros("todos").get(m1.buscarMiembros("todos").size()-1).getApellido());
+            CBEdad.setSelectedIndex(m1.buscarMiembros("todos").get(m1.buscarMiembros("todos").size()-1).getEdad()-1);
+
+            for (int j = 0; j < m1.buscarCalle("").size(); j++) {
+                if (m1.buscarCalle("").get(j).getID_Calle() == m1.buscarMiembros("todos").get(num).getCalle()) {
+                    CBcoloniasM.setSelectedIndex(m1.buscarCalle("").get(j).getID_Colonia());
+
+                }
+            }//for
+            for (int n = 0; n < CBcallesM.getItemCount(); n++) {
+                int m = m1.buscarMiembros("todos").get(num).getCalle();
+                String compa = m1.buscarCalle("").get(m - 1).getNombre_Calle();
+                if (compa.equals(CBcallesM.getItemAt(n))) {
+                    CBcallesM.setSelectedIndex(n);
+
+                }
+            }
+
+            //==============
+            tfCons.setText(String.valueOf(m1.buscarMiembros("todos").size()));
         }
+
     }//ActionPerformed
+
+
+
+
+
 
     public void actualizarTablas(JTable tabla){
         String controlador="com.mysql.cj.jdbc.Driver";
-        String URL= "jdbc:mysql://localhost:3306/poyecto_farmacias";
-        String consulta="SELECT * FROM pacientes";
+        String URL= "jdbc:mysql://localhost:3306/Empresa_Teatro";
+        String consulta="SELECT * FROM Miembros";
         ResultSetTableModel modeloTabla=null;
         try {
             modeloTabla = new ResultSetTableModel(controlador,URL,consulta);
@@ -807,12 +981,12 @@ public class VentanaInicio extends JFrame  implements ActionListener, KeyListene
 
 
     public void LLenarCB_Colonias(){
-    int tamaño=m1.buscarColonia("").size();
-    Catalogo_Colonias = new String[tamaño+1];
-    Catalogo_Colonias[0]="Seleccione su colonia";
-    for (int i=1; i<tamaño+1; i++){
-        Catalogo_Colonias[i]=m1.buscarColonia("").get(i-1).getNombre_Colonia();
-    }
+        int tamaño=m1.buscarColonia("").size();
+        Catalogo_Colonias = new String[tamaño+1];
+        Catalogo_Colonias[0]="Seleccione su colonia";
+        for (int i=1; i<tamaño+1; i++){
+            Catalogo_Colonias[i]=m1.buscarColonia("").get(i-1).getNombre_Colonia();
+        }
 
     }
 

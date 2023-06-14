@@ -9,7 +9,7 @@ public class Miembro {
     private String Apellido;
     private String Es_Actor;
 
-    public Miembro(int ID_Miembro, String nombre, String apellido,byte edad, String es_Actor, int calle) {
+    public Miembro(int ID_Miembro, String nombre, String apellido, byte edad, String es_Actor, int calle) {
         this.ID_Miembro = ID_Miembro;
         Nombre = nombre;
         Apellido = apellido;
@@ -17,7 +17,9 @@ public class Miembro {
         Calle = calle;
         Edad = edad;
     }
-    public Miembro(){}
+
+    public Miembro() {
+    }
 
     public int getID_Miembro() {
         return ID_Miembro;
@@ -66,6 +68,7 @@ public class Miembro {
     public void setCalle(int calle) {
         Calle = calle;
     }
+
 
 
 
