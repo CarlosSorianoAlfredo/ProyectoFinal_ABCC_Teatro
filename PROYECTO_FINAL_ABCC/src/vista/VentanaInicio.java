@@ -693,49 +693,57 @@ public class VentanaInicio extends JFrame  implements ActionListener, KeyListene
                 btn_CambiarMiembro.setEnabled(false);
 
 
-            }else  {
-                metodoMagicoHabilitarComponentes(tfnombreM,tfApellidoMiembro,CBEdad, CBcallesM, CBcoloniasM);
-                for (int i=0; i<contMiembros; i++){
-                    if (i==contMiembros){
-                        JOptionPane.showMessageDialog(getContentPane(),"ESE MIEMBRO NO EXISTE");
-                    }else if(Integer.parseInt(tfID.getText())==m1.buscarMiembros("todos").get(i).getID_Miembro()){
-                        cont_ID_Cambio=Integer.parseInt(tfID.getText());
-                        tfnombreM.setText(m1.buscarMiembros("todos").get(i).getNombre());
-                        tfApellidoMiembro.setText(m1.buscarMiembros("todos").get(i).getApellido());
-                        CBEdad.setSelectedIndex(m1.buscarMiembros("todos").get(i).getEdad()-1);
+            } else if (Integer.parseInt(tfID.getText()) <= m1.buscarMiembros("").get(m1.buscarMiembros("").size()-1).getID_Miembro()) {
+                for (int k=0; k<m1.buscarMiembros("").size(); k++){
+                    if(Integer.parseInt(tfID.getText()) == m1.buscarMiembros("").get(k).getID_Miembro()){
+                        metodoMagicoHabilitarComponentes(tfnombreM,tfApellidoMiembro,CBEdad, CBcallesM, CBcoloniasM);
+                        for (int i=0; i<contMiembros; i++){
+                            if (i==contMiembros){
+                                JOptionPane.showMessageDialog(getContentPane(),"ESE MIEMBRO NO EXISTE");
+                            }else if(Integer.parseInt(tfID.getText())==m1.buscarMiembros("todos").get(i).getID_Miembro()){
+                                cont_ID_Cambio=Integer.parseInt(tfID.getText());
+                                tfnombreM.setText(m1.buscarMiembros("todos").get(i).getNombre());
+                                tfApellidoMiembro.setText(m1.buscarMiembros("todos").get(i).getApellido());
+                                CBEdad.setSelectedIndex(m1.buscarMiembros("todos").get(i).getEdad()-1);
 
-                        if(m1.buscarMiembros("todos").get(i).getEs_Actor().equals("si")){
-                            EresActor.setSelected(true);
+                                if(m1.buscarMiembros("todos").get(i).getEs_Actor().equals("si")){
+                                    EresActor.setSelected(true);
 
 
-                        }else {
-                            EresActor.setSelected(false);
+                                }else {
+                                    EresActor.setSelected(false);
+                                }
+                                for (int j =0; j<m1.buscarCalle("").size(); j++){
+                                    if(m1.buscarCalle("").get(j).getID_Calle()==m1.buscarMiembros("todos").get(i).getCalle()){
+                                        CBcoloniasM.setSelectedIndex(m1.buscarCalle("").get(j).getID_Colonia());
+                                        JOptionPane.showMessageDialog(getContentPane(),"COLONIA A INGRESAR EN LA CB"+m1.buscarCalle("").get(j).getID_Colonia());
+                                        break;
+                                    }
+                                }//for
+
+                                for(int n=0; n<CBcallesM.getItemCount(); n++){
+                                    int m=m1.buscarMiembros("todos").get(i).getCalle();
+                                    JOptionPane.showMessageDialog(getContentPane(),"VALOR DE (M) DEL id CALLE"+ m);
+                                    String compa=m1.buscarCalle("").get(m-1).getNombre_Calle();
+                                    JOptionPane.showMessageDialog(getContentPane(),"NOMBRE DE LACALLE"+ compa);
+
+                                    if(compa.equals(CBcallesM.getItemAt(n))){
+                                        CBcallesM.setSelectedIndex(n);
+                                        break;
+                                    }
+                                } break;
+
+                            }
                         }
-                        for (int j =0; j<m1.buscarCalle("").size(); j++){
-                            if(m1.buscarCalle("").get(j).getID_Calle()==m1.buscarMiembros("todos").get(i).getCalle()){
-                                CBcoloniasM.setSelectedIndex(m1.buscarCalle("").get(j).getID_Colonia());
-                                JOptionPane.showMessageDialog(getContentPane(),"COLONIA A INGRESAR EN LA CB"+m1.buscarCalle("").get(j).getID_Colonia());
-                                break;
-                            }
-                        }//for
+                        JOptionPane.showMessageDialog(getContentPane(), cont_ID_Cambio );
+                        btn_CambiarMiembro.setEnabled(true);
+                        metodoMagicoParaDesabilitarComponentes(btn_AgregarMiembro,btn_EliminarMiembro, btn_BuscarMiembro);
 
-                        for(int n=0; n<CBcallesM.getItemCount(); n++){
-                            int m=m1.buscarMiembros("todos").get(i).getCalle();
-                            JOptionPane.showMessageDialog(getContentPane(),"VALOR DE (M) DEL id CALLE"+ m);
-                            String compa=m1.buscarCalle("").get(m-1).getNombre_Calle();
-                            JOptionPane.showMessageDialog(getContentPane(),"NOMBRE DE LACALLE"+ compa);
-
-                            if(compa.equals(CBcallesM.getItemAt(n))){
-                                CBcallesM.setSelectedIndex(n);
-                                break;
-                            }
-                        } break;
-
-                    }
-                }
-                JOptionPane.showMessageDialog(getContentPane(), cont_ID_Cambio );
-                btn_CambiarMiembro.setEnabled(true);
-                metodoMagicoParaDesabilitarComponentes(btn_AgregarMiembro,btn_EliminarMiembro, btn_BuscarMiembro);
+                    }//if
+                }//for
+            } else {
+                JOptionPane.showMessageDialog(getContentPane(), "Usuario no Existente" );
+                metodoMagicoParaRestablecerComponentes(tfnombreM,tfApellidoMiembro,CBEdad, CBcallesM, CBcoloniasM, EresActor, tfID);
             }
 
         } else if (c==btn_CambiarMiembro) {

@@ -51,9 +51,9 @@ public class ConexionBD {
     public static boolean AgregarMiembro(Miembro a){
         try {
             pstm = conexion.prepareStatement("insert into miembros values(?,?,?,?,?,?)");
-            System.out.println("METODO DE AGREGAR MIEMBRO CONEXIONBD "+a.getID_Miembro() + a.getNombre() + a.getApellido() + a.getEdad() + a.getEs_Actor() + a.getCalle());
+
             pstm.setInt(1,a.getID_Miembro());
-            System.out.println(a.getID_Miembro());
+
             pstm.setString(2, a.getNombre());
             pstm.setString(3,a.getApellido());
             pstm.setByte(4,a.getEdad());

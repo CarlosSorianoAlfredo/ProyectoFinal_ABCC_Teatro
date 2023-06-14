@@ -95,7 +95,7 @@ public class Login extends JFrame {
 
     public boolean verificar() {
         try {
-            ArrayList<Usuario> listaUsuarios = uDAO.buscarUsuario("SELECT * FROM usuario");
+            ArrayList<Usuario> listaUsuarios = uDAO.buscarUsuario("SELECT * FROM usuario WHERE Usuario = '"+jtfUsuario.getText()+"'");
 
             uDAO.setFiltro("SELECT * FROM usuario WHERE Usuario = '"+jtfUsuario.getText()+"'");
             Thread hilo = new Thread(uDAO);
